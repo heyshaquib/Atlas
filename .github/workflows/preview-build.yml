@@ -35,6 +35,9 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Run code generation
+        run: dart run build_runner build -d
+
       - name: Build debug APK
         run: flutter build apk --debug
 

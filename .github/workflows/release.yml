@@ -54,6 +54,8 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
 
+    - name: Run code generation
+      run: dart run build_runner build -d
     - name: Decode keystore and create properties
       env:
         KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
