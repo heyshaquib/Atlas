@@ -86,8 +86,10 @@ jobs:
         # Replace version: 1.0.0+1 with version: 1.2.3+2
         sed -i -E "s/^version: [0-9\.]+\+[0-9]+/version: ${VERSION_NAME}+${NEXT_CODE}/" "$PUBSPEC"
 
-    - name: Build Release APK
-      run: flutter build apk --release
+    - name: Build Release APKs
+      run: |
+        flutter build apk --release
+        flutter build apk --release --split-per-abi
 
     - name: Commit version updates
       id: version_commit
@@ -141,10 +143,15 @@ jobs:
       run: |
         mkdir -p release
         shopt -s nullglob
-        APK_FILES=(build/app/outputs/flutter-apk/app-release.apk)
-        for apk in "${APK_FILES[@]}"; do
-          target="release/Atlas-v${{ inputs.version_name }}.apk"
-          cp "$apk" "$target"
+        # Universal APK
+        if [ -f "build/app/outputs/flutter-apk/app-release.apk" ]; then
+          cp "build/app/outputs/flutter-apk/app-release.apk" "release/Atlas-v${{ inputs.version_name }}-universal.apk"
+        fi
+        # Split APKs
+        for apk in build/app/outputs/flutter-apk/app-*-release.apk; do
+          filename=$(basename "$apk")
+          abi=$(echo "$filename" | sed 's/^app-\(.*\)-release\.apk$/\1/')
+          cp "$apk" "release/Atlas-v${{ inputs.version_name }}-$abi.apk"
         done
 
     - name: Create Release

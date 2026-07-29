@@ -38,48 +38,53 @@ jobs:
       - name: Run code generation
         run: dart run build_runner build -d
 
-      - name: Build debug APK
-        run: flutter build apk --debug
+      - name: Build debug APKs
+        run: |
+          flutter build apk --debug
+          flutter build apk --debug --split-per-abi
 
-      - name: Collect APK and compute checksums
+      - name: Collect APKs and compute checksums
         id: apk
         run: |
           set -euo pipefail
-          APK=$(find build/app/outputs/flutter-apk -name 'app-debug.apk' | head -n1)
-          if [ -z "$APK" ]; then
-            echo "::error::No debug APK found under build/app/outputs/flutter-apk"
-            exit 1
-          fi
           SHORT_SHA=$(git rev-parse --short HEAD)
           SAFE_REF=$(echo "${GITHUB_REF_NAME}" | tr '/ ' '__')
-          DEST="Atlas-debug-${SAFE_REF}-${SHORT_SHA}.apk"
-          cp "$APK" "$DEST"
-
-          SHA256=$(sha256sum "$DEST" | awk '{print $1}')
-          SHA1=$(sha1sum "$DEST" | awk '{print $1}')
-          MD5=$(md5sum "$DEST" | awk '{print $1}')
-          SIZE=$(du -h "$DEST" | cut -f1)
-
-          echo "apk_name=${DEST}" >> "$GITHUB_OUTPUT"
-
+          mkdir -p output_apks
+          
           {
             echo "**Preview build of \`${GITHUB_REF_NAME}\`**"
             echo ""
-            echo "| Field | Value |"
-            echo "| --- | --- |"
-            echo "| File | \`${DEST}\` |"
-            echo "| Branch | \`${GITHUB_REF_NAME}\` |"
-            echo "| Commit | \`${SHORT_SHA}\` |"
-            echo "| Size | ${SIZE} |"
-            echo "| SHA-256 | \`${SHA256}\` |"
-            echo "| SHA-1 | \`${SHA1}\` |"
-            echo "| MD5 | \`${MD5}\` |"
+            echo "| File | Size | SHA-256 |"
+            echo "| --- | --- | --- |"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Upload APK as a workflow artifact
+          # Universal APK
+          if [ -f "build/app/outputs/flutter-apk/app-debug.apk" ]; then
+            dest="Atlas-debug-universal-${SAFE_REF}-${SHORT_SHA}.apk"
+            cp "build/app/outputs/flutter-apk/app-debug.apk" "output_apks/$dest"
+            size=$(du -h "output_apks/$dest" | cut -f1)
+            sha256=$(sha256sum "output_apks/$dest" | awk '{print $1}')
+            echo "| \`${dest}\` | ${size} | \`${sha256}\` |" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          
+          # Split APKs
+          shopt -s nullglob
+          for apk in build/app/outputs/flutter-apk/app-*-debug.apk; do
+            filename=$(basename "$apk")
+            abi=$(echo "$filename" | sed 's/^app-\(.*\)-debug\.apk$/\1/')
+            dest="Atlas-debug-$abi-${SAFE_REF}-${SHORT_SHA}.apk"
+            cp "$apk" "output_apks/$dest"
+            size=$(du -h "output_apks/$dest" | cut -f1)
+            sha256=$(sha256sum "output_apks/$dest" | awk '{print $1}')
+            echo "| \`${dest}\` | ${size} | \`${sha256}\` |" >> "$GITHUB_STEP_SUMMARY"
+          done
+
+          echo "artifact_name=Atlas-debug-${SAFE_REF}-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload APKs as workflow artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.apk.outputs.apk_name }}
-          path: ${{ steps.apk.outputs.apk_name }}
+          name: ${{ steps.apk.outputs.artifact_name }}
+          path: output_apks/*.apk
           if-no-files-found: error
           retention-days: 30
