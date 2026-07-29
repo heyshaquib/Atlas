@@ -1,4 +1,4 @@
-<h2 align="center"><b>Atlas 🌍</b></h2>
+<h2 align="center"><b>Atlas 📖</b></h2>
 <h4 align="center">A privacy-first, fully offline Android bookmark manager featuring Material You Monet dynamic theming, intelligent metadata extraction, and robust organization to give users complete control over their saved links.</h4>
 
 <hr>
@@ -31,6 +31,10 @@ Since it is free and open-source software, Atlas does not use any cloud servers,
 * **🧹 Smart Maintenance:** Background tasks for dead link checking and automatic trash bin cleanup so your database stays pristine.
 
 ## Getting Started
+
+> [!IMPORTANT]
+> This is the SHA-256 fingerprint of Atlas's signing key to verify downloaded APKs which are signed by us:
+> `19:C9:16:A8:26:8D:A3:34:C1:0D:14:F8:76:B5:A2:99:27:91:47:57:72:13:A5:BD:0E:14:1D:0C:9F:E7:CA:BA`
 
 ### Prerequisites
 
