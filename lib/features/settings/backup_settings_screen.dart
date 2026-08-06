@@ -8,6 +8,7 @@ import 'package:drift/drift.dart' show Value, InsertMode;
 import 'package:atlas/app.dart';
 import 'package:atlas/core/database/app_database.dart';
 import 'package:atlas/core/utils/utils.dart';
+import 'package:intl/intl.dart';
 
 class BackupSettingsScreen extends ConsumerWidget {
   const BackupSettingsScreen({super.key});
@@ -59,9 +60,10 @@ class BackupSettingsScreen extends ConsumerWidget {
       folders: List<Map<String, dynamic>>.from(data['folders'] ?? []),
     );
     
+    final timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
     final outputFile = await FilePicker.platform.saveFile(
       dialogTitle: 'Save Bookmarks Export',
-      fileName: 'atlas_bookmarks.html',
+      fileName: 'atlas_bookmarks_$timestamp.html',
       type: FileType.custom,
       allowedExtensions: ['html', 'htm'],
       bytes: Uint8List.fromList(utf8.encode(html)),
@@ -80,9 +82,10 @@ class BackupSettingsScreen extends ConsumerWidget {
     final data = await db.exportAllData();
     final json = jsonEncode(data);
     
+    final timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
     final outputFile = await FilePicker.platform.saveFile(
       dialogTitle: 'Save Bookmarks Export',
-      fileName: 'atlas_bookmarks.json',
+      fileName: 'atlas_bookmarks_$timestamp.json',
       type: FileType.custom,
       allowedExtensions: ['json'],
       bytes: Uint8List.fromList(utf8.encode(json)),
