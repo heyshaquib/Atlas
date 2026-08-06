@@ -71,6 +71,7 @@ void main() async {
 
   // Register periodic tasks
   final prefs = await SharedPreferences.getInstance();
+  final onboardingDone = prefs.getBool('onboarding_complete') ?? false;
   final deadLinkFreq = prefs.getString('dead_link_check_frequency') ?? 'weekly';
 
   if (deadLinkFreq != 'never') {
@@ -91,9 +92,5 @@ void main() async {
     frequency: const Duration(days: 1),
   );
 
-  runApp(
-    const ProviderScope(
-      child: AtlasApp(),
-    ),
-  );
+  runApp(ProviderScope(child: AtlasApp(initialOnboardingDone: onboardingDone)));
 }

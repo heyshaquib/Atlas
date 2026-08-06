@@ -17,6 +17,7 @@ import 'package:atlas/features/bookmarks/bookmarks_screen.dart';
 import 'package:atlas/features/search/search_screen.dart';
 import 'package:atlas/features/folders/folders_screen.dart';
 import 'package:atlas/features/share/share_intent_handler.dart';
+import 'package:atlas/features/onboarding/onboarding_screen.dart';
 
 // ─── Global Providers ─────────────────────────────────────
 
@@ -33,8 +34,9 @@ final sharedPreferencesProvider = FutureProvider<SharedPreferences>((ref) {
 });
 
 /// Theme mode provider
-final themeModeProvider =
-    NotifierProvider<ThemeModeNotifier, AtlasThemeMode>(ThemeModeNotifier.new);
+final themeModeProvider = NotifierProvider<ThemeModeNotifier, AtlasThemeMode>(
+  ThemeModeNotifier.new,
+);
 
 class ThemeModeNotifier extends Notifier<AtlasThemeMode> {
   @override
@@ -83,8 +85,9 @@ class DynamicColorNotifier extends Notifier<bool> {
 }
 
 /// View mode provider
-final viewModeProvider =
-    NotifierProvider<ViewModeNotifier, ViewMode>(ViewModeNotifier.new);
+final viewModeProvider = NotifierProvider<ViewModeNotifier, ViewMode>(
+  ViewModeNotifier.new,
+);
 
 class ViewModeNotifier extends Notifier<ViewMode> {
   @override
@@ -121,8 +124,9 @@ class ViewModeNotifier extends Notifier<ViewMode> {
 }
 
 /// Show reading time badge
-final showReadingTimeProvider =
-    NotifierProvider<ShowReadingTimeNotifier, bool>(ShowReadingTimeNotifier.new);
+final showReadingTimeProvider = NotifierProvider<ShowReadingTimeNotifier, bool>(
+  ShowReadingTimeNotifier.new,
+);
 
 class ShowReadingTimeNotifier extends Notifier<bool> {
   @override
@@ -145,7 +149,9 @@ class ShowReadingTimeNotifier extends Notifier<bool> {
 
 /// Browser choice
 final browserChoiceProvider =
-    NotifierProvider<BrowserChoiceNotifier, BrowserChoice>(BrowserChoiceNotifier.new);
+    NotifierProvider<BrowserChoiceNotifier, BrowserChoice>(
+      BrowserChoiceNotifier.new,
+    );
 
 class BrowserChoiceNotifier extends Notifier<BrowserChoice> {
   @override
@@ -172,7 +178,9 @@ class BrowserChoiceNotifier extends Notifier<BrowserChoice> {
 
 /// Mark as read on open
 final markAsReadOnOpenProvider =
-    NotifierProvider<MarkAsReadOnOpenNotifier, bool>(MarkAsReadOnOpenNotifier.new);
+    NotifierProvider<MarkAsReadOnOpenNotifier, bool>(
+      MarkAsReadOnOpenNotifier.new,
+    );
 
 class MarkAsReadOnOpenNotifier extends Notifier<bool> {
   @override
@@ -196,7 +204,9 @@ class MarkAsReadOnOpenNotifier extends Notifier<bool> {
 // ─── Atlas App ────────────────────────────────────────────
 
 class AtlasApp extends ConsumerStatefulWidget {
-  const AtlasApp({super.key});
+  final bool initialOnboardingDone;
+
+  const AtlasApp({super.key, required this.initialOnboardingDone});
 
   @override
   ConsumerState<AtlasApp> createState() => _AtlasAppState();
@@ -235,7 +245,7 @@ class _AtlasAppState extends ConsumerState<AtlasApp> {
   @override
   Widget build(BuildContext context) {
     if (!_monetLoaded) {
-      return const SizedBox.shrink(); 
+      return const SizedBox.shrink();
     }
 
     final themeMode = ref.watch(themeModeProvider);
@@ -291,7 +301,9 @@ class _AtlasAppState extends ConsumerState<AtlasApp> {
       theme: effectiveTheme,
       darkTheme: effectiveDarkTheme,
       themeMode: flutterThemeMode,
-      home: const AtlasShell(),
+      home: widget.initialOnboardingDone
+          ? const AtlasShell()
+          : const OnboardingScreen(),
     );
   }
 }
@@ -308,11 +320,7 @@ class AtlasShell extends ConsumerStatefulWidget {
 class _AtlasShellState extends ConsumerState<AtlasShell> {
   int _currentIndex = 0;
 
-  final _screens = const [
-    BookmarksScreen(),
-    SearchScreen(),
-    FoldersScreen(),
-  ];
+  final _screens = const [BookmarksScreen(), SearchScreen(), FoldersScreen()];
 
   @override
   void initState() {
@@ -323,18 +331,18 @@ class _AtlasShellState extends ConsumerState<AtlasShell> {
 
   @override
   Widget build(BuildContext context) {
-
-
     // Update system UI based on theme
     final brightness = Theme.of(context).brightness;
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness:
-            brightness == Brightness.dark ? Brightness.light : Brightness.dark,
+        statusBarIconBrightness: brightness == Brightness.dark
+            ? Brightness.light
+            : Brightness.dark,
         systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness:
-            brightness == Brightness.dark ? Brightness.light : Brightness.dark,
+        systemNavigationBarIconBrightness: brightness == Brightness.dark
+            ? Brightness.light
+            : Brightness.dark,
       ),
     );
 
