@@ -64,7 +64,7 @@ class AboutScreen extends StatelessWidget {
               children: [
                 const Divider(height: 1),
                 const SizedBox(height: 16),
-                _buildInfoRow('Developer', 'Atlas Team', textTheme),
+                _buildInfoRow('Developer', 'heyshaquib', textTheme),
                 const SizedBox(height: 16),
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
