@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -40,11 +41,19 @@ class AboutScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            'Version 1.0.0',
-            style: textTheme.bodyMedium?.copyWith(
-              color: cs.onSurfaceVariant,
-            ),
+          FutureBuilder<PackageInfo>(
+            future: PackageInfo.fromPlatform(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Text(
+                  'Version ${snapshot.data!.version}',
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: cs.onSurfaceVariant,
+                  ),
+                );
+              }
+              return const SizedBox(height: 20);
+            },
           ),
           const SizedBox(height: 48),
           
@@ -59,16 +68,21 @@ class AboutScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const LicensePage(
-                        applicationName: 'Atlas',
-                        applicationVersion: '1.0.0',
-                      ),
-                    ),
-                  ),
-                  child: _buildInfoRow('License', 'Open Source', textTheme),
+                  onTap: () async {
+                    final packageInfo = await PackageInfo.fromPlatform();
+                    if (context.mounted) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => LicensePage(
+                            applicationName: 'Atlas',
+                            applicationVersion: packageInfo.version,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  child: _buildInfoRow('License', 'GPLv3', textTheme),
                 ),
                 const SizedBox(height: 16),
                 _buildInfoRow('Platform', 'Android', textTheme),
