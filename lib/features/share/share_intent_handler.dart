@@ -4,7 +4,7 @@ import 'package:atlas/core/utils/utils.dart';
 import 'package:atlas/features/share/quick_save_sheet.dart';
 
 class ShareIntentHandler {
-  static const MethodChannel _channel = MethodChannel('com.atlas.web/share');
+  static const MethodChannel _channel = MethodChannel('dev.heyshaquib.atlas/share');
 
   /// Check for any intent text that launched the app initially.
   static Future<void> checkInitialIntent(BuildContext context) async {

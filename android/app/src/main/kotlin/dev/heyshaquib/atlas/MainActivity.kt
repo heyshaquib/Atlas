@@ -1,4 +1,4 @@
-package com.atlas.web
+package dev.heyshaquib.atlas
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,7 +7,7 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
-    private val CHANNEL = "com.atlas.web/share"
+    private val CHANNEL = "dev.heyshaquib.atlas/share"
     private var sharedText: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

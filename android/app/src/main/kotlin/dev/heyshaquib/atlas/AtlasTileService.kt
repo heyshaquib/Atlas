@@ -1,4 +1,4 @@
-package com.atlas.web
+package dev.heyshaquib.atlas
 
 import android.content.Intent
 import android.service.quicksettings.TileService
