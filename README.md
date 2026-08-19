@@ -33,8 +33,9 @@ Since it is free and open-source software, Atlas does not use any cloud servers,
 ## Getting Started
 
 > [!IMPORTANT]
-> This is the SHA-256 fingerprint of Atlas's signing key to verify downloaded APKs which are signed by us:
-> `19:C9:16:A8:26:8D:A3:34:C1:0D:14:F8:76:B5:A2:99:27:91:47:57:72:13:A5:BD:0E:14:1D:0C:9F:E7:CA:BA`
+> To ensure the authenticity of the downloaded APKs, you can verify their signatures against our official signing key fingerprints:
+> - **SHA-256**: `E9:EF:EF:6F:90:35:59:3A:76:29:20:5B:E1:1F:46:E7:14:54:C6:28:EA:B5:30:3C:59:EB:EF:05:3B:9C:C9:C8`
+> - **SHA-1**: `E0:4B:92:49:AE:0A:67:0C:B0:ED:A1:DC:BD:56:4B:25:E7:38:0A:3B`
 
 ### Prerequisites
 
